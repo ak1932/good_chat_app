@@ -9,4 +9,4 @@ You :)
 ## Why does it exist?
 For having complete privacy with your conversations
 
-![Alt text](./frontend)
+![Alt text](https://github.com/ak1932/good_chat_app/blob/main/frontend)
