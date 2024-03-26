@@ -42,10 +42,9 @@ let MsgWin = () => {
                     <ChatBubble from={chat.from} text={chat.text} />
                 ))}
             </div>
-            <div className="origin-bottom h-16 border-theme_yellow fixed whitespace-normal bottom-5 bg-theme_gray flex flex-row">
-                <input className="bg-theme_gray w-96 focus:outline-0 focus:outline-none pl-8">
-                </input>
-                <div className="h-12 w-32 border-4 m-2 border-theme_yellow font-bold flex justify-center items-center hover:bg-theme_yellow hover:text-theme_gray ">SEND
+            <div className="origin-bottom h-16 border-theme_yellow fixed whitespace-normal bottom-5 bg-theme_gray flex flex-row w-[calc(100%-22em)]">
+                <input className="bg-theme_gray focus:outline-0 focus:outline-none pl-8 inline-block]"></input>
+                <div className="h-12 w-32 border-4 m-2 border-theme_yellow font-bold flex justify-center items-center hover:bg-theme_yellow hover:text-theme_gray">SEND
                 </div>
             </div>
         </div>
