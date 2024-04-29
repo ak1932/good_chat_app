@@ -9,9 +9,9 @@ router
     .route("/register")
     .get(async (req, res) => {
         if (req.session.user && req.session.user.username) {
-            res.json({ user: { username: req.session.user.username, rooms: [] } });
+            res.json({ user: { username: req.session.user.username, rooms: req.session.user.rooms, id: req.session.user.id } });
         } else {
-            res.json({status: "failed"});
+            res.json({ status: "failed" });
         }
     })
     .post(async (req, res) => {
@@ -25,12 +25,14 @@ router
         if (existingUser.rowCount === 0) {
             //register
             const hashedPass = await bcrypt.hash(password, 10); // 10 is time required for hashing
-            const newUserQuery = await pool.query("INSERT INTO users(username, passhash) values($1, $2) RETURNING username", [username, hashedPass]);
+            const newUserQuery = await pool.query("INSERT INTO users(username, passhash) values($1, $2) RETURNING username, id", [username, hashedPass]);
             req.session.user = {
                 username: username,
                 id: newUserQuery.rows[0].id,
+                rooms: []
             }
-            res.json({ user: { username: req.session.user.username, rooms: [] } });
+            console.log(`new user registered => ${JSON.stringify(req.session.user)}`)
+            res.json({ user: { username: req.session.user.username, rooms: req.session.user.rooms, id: req.session.user.id } });
         } else {
             res.json({ status: "Username taken" });
         }
@@ -40,7 +42,7 @@ router
     .route("/login")
     .get(async (req, res) => {
         if (req.session.user && req.session.user.username) {
-            res.json({ user: { username: req.session.user.username, rooms: [] } });
+            res.json({ user: { username: req.session.user.username, rooms: req.session.user.rooms, id: req.session.user.id } });
         } else {
             res.json({ status: "failed" });
         }
@@ -51,14 +53,22 @@ router
 
         if (potentialLogin.rowCount > 0) {
             const isSamePass = await bcrypt.compare(req.body.password, potentialLogin.rows[0].passhash);
+
             if (isSamePass) {
+                const userID = potentialLogin.rows[0].id;
+
+                const room_query = await pool.query("SELECT r.id as id, r.name as name from user_rooms ur join user u on ur.user_id = $1 join rooms r on r.id = ur.room_id;", [userID])
+
+                const rooms = room_query.rows;
+                console.log(`rooms=>${JSON.stringify(rooms)}`)
                 // login
                 req.session.user = {
                     username: req.body.username,
-                    id: potentialLogin.rows[0].id,
+                    id: userID,
+                    rooms: rooms
                 }
                 console.log("login good");
-                res.json({ user: { username: req.body.username, rooms: [], selectedRoom: null } })
+                res.json({ user: { username: req.body.username, rooms: req.session.user.rooms, id: req.session.user.id } })
             } else {
                 // not good login
                 console.log("Wrong username or password");

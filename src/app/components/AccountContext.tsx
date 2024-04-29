@@ -2,11 +2,18 @@
 import { useRouter } from 'next/navigation';
 import { createContext, useState, ReactNode, useEffect, SetStateAction, Dispatch } from 'react';
 
+export interface Room {
+    id: number,
+    name: string,
+}
+
 interface User {
     username: string,
-    selectedRoom: string | null,
-    rooms: string[],
+    selectedRoom: Room | null,
+    id: number,
+    rooms: Room[],
 }
+
 type AccountContextType = {
     user: User | null,
     setUser: Dispatch<SetStateAction<User | null>>

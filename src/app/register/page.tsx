@@ -29,6 +29,7 @@ export default function Home() {
                     initialValues={{ username: "", password: "" }}
                     validationSchema={formSchema}
                     onSubmit={(values, actions) => {
+                        console.log("hello hoe")
                         const vals = { ...values };
                         actions.resetForm();
                         fetch("http://localhost:4000/auth/register", {
